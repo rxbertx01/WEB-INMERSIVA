@@ -1,0 +1,59 @@
+:root {
+  --bg: #0A0A0B;
+  --fg: #F5F5F7;
+  --glass: rgba(255, 255, 255, .04);
+  --line: rgba(255, 255, 255, .12);
+  --accent: #FF2D2D;
+  --mut: rgba(245, 245, 247, .55);
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* { box-sizing: inherit; margin: 0 }
+[hidden] { display: none !important }
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  overflow: hidden;
+}
+
+.mono {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: .04em;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  background: none;
+  border: 1px solid var(--line);
+  padding: 10px 14px;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-size: 12px;
+}
+
+button:hover { border-color: var(--accent); color: var(--accent) }
+
+button.pri {
+  background: var(--accent);
+  color: #0A0A0B;
+  border-color: var(--accent);
+  font-weight: 700;
+}
+
+button.pri:hover { background: #fff; border-color: #fff; color: #0A0A0B }
+
+:focus-visible { outline: 1px solid var(--accent); outline-offset: 2px }
+
+@keyframes p { 50% { opacity: .2 } }
+@keyframes spin {
+  from { transform: perspective(600px) rotateY(-28deg) }
+  to { transform: perspective(600px) rotateY(28deg) }
+}

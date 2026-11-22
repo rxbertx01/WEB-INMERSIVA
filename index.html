@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ATELIER/VX — Showroom</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' fill='%230A0A0B'/><path d='M14 14 L32 50 L50 14' fill='none' stroke='%23FF2D2D' stroke-width='6'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles/base.css">
+<link rel="stylesheet" href="./styles/layout.css">
+<link rel="stylesheet" href="./styles/components.css">
+</head>
+<body>
+<header>
+  <h1>ATELIER<span class="slash">/VX</span></h1>
+  <nav>
+    <button id="bImmersive" type="button" class="mono" aria-pressed="false" aria-label="Activar modo inmersivo">INMERSIVO ⛶</button>
+    <button id="bUser" type="button" class="mono">LOGIN</button>
+    <button id="bAdd" type="button" class="mono" hidden>ADD CLOTHES</button>
+    <button id="bBag" type="button" class="mono">Bag (<span id="cnt">0</span>)</button>
+  </nav>
+</header>
+
+<canvas id="cv"></canvas>
+<button id="xImmersive" type="button" class="immersive-exit mono" hidden aria-label="Salir del modo inmersivo">ESC · SALIR ✕</button>
+<div class="depth-veil" aria-hidden="true"></div>
+<div id="car"></div>
+<div id="carEmpty" class="car-empty mono" role="status" aria-live="polite" hidden></div>
+<div id="tip" class="glass mono"></div>
+<div id="edition" class="mono">FLAGSHIP / 00 SHOWROOM</div>
+
+<div class="hero">
+  <div class="hero-rule"></div>
+  <h2 class="hero-title">EXPLORE THE <em>COLLECTION</em></h2>
+  <div class="filters mono" id="filters">
+    <button type="button" data-filter="all" class="on">ALL PIECES</button>
+    <button type="button" data-filter="outer">OUTERWEAR</button>
+    <button type="button" data-filter="essential">ESSENTIALS</button>
+  </div>
+</div>
+
+<div id="hint" class="mono">CLICK A RACK TO EXPLORE · DRAG TO ORBIT</div>
+
+<aside id="insp" class="panel glass">
+  <div class="pd-head">
+    <div class="pd-head-row">
+      <span class="mono pd-bag">BAG / <span id="pdBagCount">0</span></span>
+      <button id="xInsp" type="button" class="mono pd-close">CLOSE ✕</button>
+    </div>
+    <div class="mono pd-kicker" id="pdKicker">COLLECTION 00 / ATELIER</div>
+  </div>
+  <div class="pb pd-body" id="iBody"></div>
+</aside>
+
+<aside id="account" class="panel glass">
+  <div class="acc-top mono">
+    <span>MI CUENTA</span>
+    <button id="xAccount" type="button">CLOSE ✕</button>
+  </div>
+  <div class="pb" id="accountBody"></div>
+</aside>
+
+<aside id="addP" class="panel glass">
+  <div class="ph"><b>ADD CLOTHES</b><button id="xAdd" type="button">✕</button></div>
+  <div class="pb">
+    <div id="addFormHost"></div>
+    <div id="addMsg" class="mono live" role="status" aria-live="polite"></div>
+    <div class="mono admin-title">PUBLISHED PIECES</div>
+    <div id="adminList" class="admin-list"></div>
+  </div>
+</aside>
+
+<aside id="bag" class="panel glass">
+  <div class="ph"><b>Atelier Bag</b><button id="xBag" type="button">✕</button></div>
+  <div class="pb" id="bagBody"></div>
+  <div style="padding:16px;border-top:1px solid var(--line)">
+    <div class="mono" style="display:flex;justify-content:space-between;margin-bottom:6px"><span>SUBTOTAL</span><b id="sub">$0.00</b></div>
+    <div class="mono live" style="margin-bottom:10px">Colección 01 · Envío en 72h</div>
+    <button class="pri" style="width:100%" id="buy" type="button">Finalizar compra</button>
+  </div>
+</aside>
+
+<div id="login" class="modal" hidden>
+  <div class="glass modal-card">
+    <button id="xLg" type="button" class="modal-x" aria-label="Cerrar">✕</button>
+    <b id="lt" class="modal-title">INICIAR SESIÓN</b>
+    <label class="f mono" id="fn" hidden>NOMBRE<input id="ln" autocomplete="name" placeholder="Tu nombre"></label>
+    <label class="f mono">EMAIL<input id="le" type="email" autocomplete="username" placeholder="cliente@vx.com"></label>
+    <label class="f mono">CONTRASEÑA<input id="lp" type="password" autocomplete="current-password"></label>
+    <button class="pri" id="lgo" type="button">ENTRAR</button>
+    <button id="lsw" type="button" class="link-btn mono">¿No tienes cuenta? Regístrate</button>
+    <div id="lm" class="mono live" role="status" aria-live="polite"></div>
+    <div class="mono demo-box">
+      DEMO CLIENTE · cliente@vx.com / cliente123<br>
+      DEMO VENDEDOR · vendedor@vx.com / vendedor123<br>
+      DEMO ADMIN · admin@vx.com / admin1234
+    </div>
+  </div>
+</div>
+
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>

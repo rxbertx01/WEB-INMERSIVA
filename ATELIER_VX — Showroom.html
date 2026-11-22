@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ATELIER/VX — Showroom</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0A0A0B;--fg:#F5F5F7;--glass:rgba(255,255,255,.04);--line:rgba(255,255,255,.12);--acid:#CCFF00;--mut:rgba(245,245,247,.55);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:inherit;margin:0}
+html,body{height:100%;background:var(--bg);color:var(--fg);font-family:'Space Grotesk',system-ui,sans-serif;overflow:hidden}
+.mono{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;letter-spacing:.04em}
+button{font:inherit;color:inherit;cursor:pointer;background:none;border:1px solid var(--line);padding:10px 14px;text-transform:uppercase;letter-spacing:.08em;font-size:12px}
+button:hover{border-color:var(--acid);color:var(--acid)}
+button.pri{background:var(--acid);color:#0A0A0B;border-color:var(--acid);font-weight:700}
+button.pri:hover{background:#fff;border-color:#fff;color:#0A0A0B}
+.glass{background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line)}
+header{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;z-index:5;display:flex;justify-content:space-between;align-items:center;padding:14px 20px}
+h1{font-size:20px;font-weight:700;letter-spacing:.18em}
+.live{color:var(--acid)}.live:before{content:"●";margin-right:6px;animation:p 1.4s infinite}
+@keyframes p{50%{opacity:.2}}
+nav{display:flex;gap:8px}
+#cv{position:fixed;inset:0;width:100%;height:100%;display:block;cursor:grab}
+#tip{position:fixed;pointer-events:none;z-index:6;padding:8px 10px;display:none;max-width:220px}
+#tip b{display:block;font-size:14px}
+#hint{position:fixed;left:20px;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:4;color:var(--mut)}
+.panel{position:fixed;z-index:8;top:0;bottom:0;width:min(400px,100%);display:flex;flex-direction:column;transition:transform .35s ease;padding-top:env(safe-area-inset-top,0px);background:rgba(10,10,11,.88)}
+#ig{left:0;transform:translateX(-100%)}#ig.open{transform:none}
+#bag{right:0;transform:translateX(100%)}#bag.open{transform:none}
+#insp{right:0;transform:translateX(100%);width:min(440px,100%)}#insp.open{transform:none}
+.ph{padding:16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.pb{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+.msg{padding:10px;border:1px solid var(--line);cursor:pointer;font-size:13px;line-height:1.4}
+.msg:hover{border-color:var(--acid)}.msg .u{color:var(--acid);display:block;margin-bottom:4px}
+.row{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line)}
+input{flex:1;background:var(--glass);border:1px solid var(--line);color:var(--fg);padding:10px;font:inherit;font-size:13px;min-width:0}
+input:focus{outline:1px solid var(--acid)}
+.sizes{display:flex;gap:6px}.sizes button{flex:1;padding:8px}.sizes button.on{background:var(--fg);color:#000;border-color:var(--fg)}
+.spec{width:100%;border-collapse:collapse}.spec td{padding:6px 0;border-bottom:1px solid var(--line)}.spec td:first-child{color:var(--mut)}
+.stage{height:260px;display:grid;place-items:center;border:1px solid var(--line);background:radial-gradient(circle at 50% 30%,rgba(255,255,255,.12),transparent 70%)}
+.stage svg{height:92%;animation:spin 8s ease-in-out infinite alternate}
+@keyframes spin{from{transform:perspective(600px) rotateY(-28deg)}to{transform:perspective(600px) rotateY(28deg)}}
+.step{padding:8px 0;color:var(--mut)}.step.act{color:var(--acid)}.step.done{color:var(--fg)}
+.badge{color:var(--acid);border:1px solid var(--acid);padding:2px 6px}
+#car{display:none}
+.card{min-width:78%;scroll-snap-align:center;padding:14px;display:flex;flex-direction:column;gap:8px}
+.card svg{height:200px}
+@media(max-width:760px){#cv{display:none}#car{display:flex;position:fixed;inset:70px 0 0;overflow-x:auto;scroll-snap-type:x mandatory;gap:12px;padding:12px 20px;align-items:center}#hint{display:none}}
+#addP{right:0;transform:translateX(100%);width:min(420px,100%)}#addP.open{transform:none}
+.f{display:flex;flex-direction:column;gap:4px;color:var(--mut)}.f input{flex:none}
+textarea{background:var(--glass);border:1px solid var(--line);color:var(--fg);font:11px 'JetBrains Mono',monospace;height:90px;padding:8px;width:100%}
+img{max-width:100%}.stage img{height:92%;width:auto;object-fit:contain;animation:spin 8s ease-in-out infinite alternate}.card img{height:200px;object-fit:contain}
+@media(max-width:760px){h1{font-size:15px}header{padding:12px}header nav button{padding:8px;font-size:10px}}
+</style></head><body>
+<header><h1>ATELIER<span class="live">/VX</span></h1>
+<nav><button id="bUser" class="mono">Acceso</button><button id="bAdd" class="mono" style="display:none">+ Prenda</button><button id="bIg" class="mono">@atelier_vx ●</button><button id="bBag" class="mono">Bag (<span id="cnt">0</span>)</button></nav></header>
+<canvas id="cv"></canvas><div id="car"></div><div id="tip" class="glass mono"></div>
+<div id="hint" class="mono">ARRASTRA PARA ORBITAR · RUEDA PARA ZOOM · CLIC EN PRENDA</div>
+
+<aside id="ig" class="panel glass"><div class="ph"><div><b>Instagram Live / DM Drops</b><div class="mono live">@atelier_vx · EN VIVO</div></div><button id="xIg">✕</button></div>
+<div class="pb" id="feed"></div><div class="row"><input id="dm" placeholder="Escribe tu DM o comentario…"><button class="pri" id="send">Enviar</button></div></aside>
+
+<aside id="insp" class="panel glass"><div class="ph"><b id="iName"></b><button id="xInsp">✕</button></div><div class="pb" id="iBody"></div></aside>
+
+<div id="login" style="position:fixed;inset:0;z-index:20;display:none;place-items:center;background:rgba(10,10,11,.85)"><div class="glass" style="width:min(420px,92%);padding:24px;display:flex;flex-direction:column;gap:12px;background:#0A0A0B;position:relative">
+<button id="xLg" style="position:absolute;top:8px;right:8px;padding:4px 8px">✕</button><b id="lt" style="font-size:20px">Iniciar sesión</b>
+<label class="f mono" id="fn" style="display:none">NOMBRE<input id="ln"></label>
+<label class="f mono">EMAIL<input id="le" type="email" autocomplete="username"></label>
+<label class="f mono">CONTRASEÑA<input id="lp" type="password" autocomplete="current-password"></label>
+<button class="pri" id="lgo">Entrar</button><button id="lsw" type="button" class="mono" style="border:none;color:var(--mut)">¿No tienes cuenta? Regístrate</button>
+<div id="lm" class="mono live"></div><div class="mono" style="color:var(--mut)">No necesitas cuenta para comprar.</div></div></div>
+<aside id="addP" class="panel glass"><div class="ph"><b>Añadir prenda</b><button id="xAdd">✕</button></div><div class="pb"><form id="addForm" class="pb" style="padding:0;flex:none">
+<label class="f mono">FOTO (ideal: PNG con fondo transparente)<input type="file" name="foto" accept="image/*"></label>
+<label class="f mono">NOMBRE<input name="nombre" placeholder="Bomber Obsidian"></label>
+<label class="f mono">PRECIO (€)<input name="precio" type="number" min="0" placeholder="320"></label>
+<label class="f mono">TEJIDO / COMPOSICIÓN<input name="tejido" placeholder="Nylon ripstop 3 capas"></label>
+<label class="f mono">GRAMAJE (g/m²)<input name="gsm" type="number" min="0" placeholder="210"></label>
+<label class="f mono">CORTE<input name="corte" placeholder="Boxy oversize"></label>
+<label class="f mono">DÍAS DE CONFECCIÓN<input name="dias" type="number" min="1" placeholder="3"></label>
+<button class="pri">Colgar en el showroom</button></form>
+<div id="addMsg" class="mono live"></div>
+<div class="mono" style="margin-top:8px">COPIA DE SEGURIDAD</div><textarea id="io" placeholder="Pega aquí el JSON para importar"></textarea>
+<div style="display:flex;gap:8px"><button type="button" id="exp">Mostrar JSON</button><button type="button" id="imp">Importar</button></div>
+<div class="mono" style="color:var(--mut)">Se publica en el catálogo compartido. Máx. 16 prendas.</div></div></aside>
+<aside id="bag" class="panel glass"><div class="ph"><b>Atelier Bag</b><button id="xBag">✕</button></div><div class="pb" id="bagBody"></div>
+<div style="padding:16px;border-top:1px solid var(--line)"><div class="mono" style="display:flex;justify-content:space-between;margin-bottom:6px"><span>SUBTOTAL</span><b id="sub">€0</b></div><div class="mono live" style="margin-bottom:10px">Made-to-Order · Envío en 72h</div><button class="pri" style="width:100%" id="buy">Finalizar compra</button></div></aside>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const BASE=[
+{id:'h1',type:'hoodie',name:'Boxy Hoodie 01',color:'#6b6b70',price:180,fabric:'Algodón felpa lavado ácido',gsm:480,cut:'Boxy oversize',days:3},
+{id:'b1',type:'bomber',name:'Tech Bomber MA-2',color:'#1c1f1a',price:340,fabric:'Nylon ripstop 3 capas',gsm:210,cut:'Cropped técnico',days:3},
+{id:'c1',type:'cargo',name:'Cargo Utility 6P',color:'#4a4d3f',price:210,fabric:'Algodón twill encerado',gsm:320,cut:'Wide leg',days:3},
+{id:'o1',type:'coat',name:'Tailored Coat 02',color:'#2a2a2e',price:520,fabric:'Lana virgen italiana',gsm:430,cut:'Sastre largo',days:3},
+{id:'h2',type:'hoodie',name:'Zip Hoodie 02',color:'#d9d6cf',price:195,fabric:'Algodón orgánico peinado',gsm:420,cut:'Boxy cropped',days:3},
+{id:'b2',type:'bomber',name:'Varsity Bomber',color:'#5a1d1d',price:380,fabric:'Lana melton + cuero',gsm:560,cut:'Oversize',days:3},
+{id:'c2',type:'cargo',name:'Parachute Cargo',color:'#9a8f78',price:190,fabric:'Nylon paracaídas',gsm:140,cut:'Baggy',days:3},
+{id:'o2',type:'coat',name:'Trench Obsidian',color:'#101012',price:560,fabric:'Gabardina técnica',gsm:380,cut:'Trench doble botonadura',days:3}];
+const garments=[...BASE];let bag=[];
+const money=n=>'€'+n.toLocaleString('es-ES');
+function shade(h,k){let n=parseInt(h.slice(1),16),r=n>>16,g=n>>8&255,b=n&255,f=x=>Math.max(0,Math.min(255,Math.round(x*k)));return'#'+((1<<24)+(f(r)<<16)+(f(g)<<8)+f(b)).toString(16).slice(1)}
+/* ---------- 2D studio render (fallback visual) ---------- */
+const PATHS={hoodie:'M70 30 Q100 10 130 30 L172 46 L190 150 L162 156 L158 120 L158 230 L42 230 L42 120 L38 156 L10 150 L28 46Z',
+bomber:'M72 28 L100 22 L128 28 L176 44 L194 160 L166 164 L160 128 L160 214 L40 214 L40 128 L34 164 L6 160 L24 44Z',
+coat:'M74 24 L100 38 L126 24 L168 40 L186 170 L160 172 L158 100 L152 290 L48 290 L42 100 L40 172 L14 170 L32 40Z',
+cargo:'M52 20 H148 L156 110 L168 290 H110 L100 120 L90 290 H32 L44 110Z'};
+function svg(g,big){if(g.img)return `<img src="${g.img}" alt="">`;const c=g.color,id='g'+Math.random().toString(36).slice(2,7);
+const extra=g.type==='hoodie'?'<path d="M70 30 Q100 70 130 30" fill="none" stroke="#0006" stroke-width="3"/><rect x="62" y="150" width="76" height="30" rx="4" fill="#0003"/>':g.type==='bomber'?'<rect x="94" y="24" width="12" height="190" fill="#ffffff22"/><rect x="40" y="200" width="120" height="14" fill="#0004"/>':g.type==='coat'?'<path d="M100 38 L100 290" stroke="#0005" stroke-width="2"/><circle cx="92" cy="110" r="3" fill="#fff6"/><circle cx="92" cy="160" r="3" fill="#fff6"/><circle cx="92" cy="210" r="3" fill="#fff6"/>':'<rect x="40" y="70" width="26" height="40" fill="#0003"/><rect x="134" y="70" width="26" height="40" fill="#0003"/><path d="M100 20V120" stroke="#0005"/>';
+const tex=g.fabric.match(/cuero/i)?'<path d="M20 60 L180 200 M40 40 L190 150 M10 120 L120 250" stroke="#fff" opacity=".07" stroke-width="1"/>':'';
+return`<svg viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${shade(c,1.5)}"/><stop offset=".5" stop-color="${c}"/><stop offset="1" stop-color="${shade(c,.45)}"/></linearGradient></defs><path d="${PATHS[g.type]}" fill="url(#${id})" stroke="#ffffff30"/>${extra}${tex}<ellipse cx="100" cy="296" rx="70" ry="4" fill="#000" opacity=".5"/></svg>`}
+/* ---------- 3D scene ---------- */
+const cv=$('#cv'),R=new THREE.WebGLRenderer({canvas:cv,antialias:true});R.setPixelRatio(Math.min(devicePixelRatio,2));
+const S=new THREE.Scene();S.background=new THREE.Color(0x0A0A0B);S.fog=new THREE.Fog(0x0A0A0B,12,30);
+const cam=new THREE.PerspectiveCamera(50,1,.1,60);
+S.add(new THREE.HemisphereLight(0xffffff,0x222222,.55));
+const sp=new THREE.SpotLight(0xffffff,1.1,30,.9,.6);sp.position.set(0,8,6);S.add(sp);
+const sp2=new THREE.PointLight(0xCCFF00,.6,14);sp2.position.set(0,3,-2);S.add(sp2);
+const floor=new THREE.Mesh(new THREE.PlaneGeometry(40,40),new THREE.MeshStandardMaterial({color:0x151517,roughness:.9}));floor.rotation.x=-Math.PI/2;S.add(floor);
+const grid=new THREE.GridHelper(40,40,0x2a2a2d,0x1a1a1c);grid.position.y=.01;S.add(grid);
+const wall=new THREE.Mesh(new THREE.PlaneGeometry(40,10),new THREE.MeshStandardMaterial({color:0x1b1b1d,roughness:1}));wall.position.set(0,5,-5);S.add(wall);
+const neon=new THREE.Mesh(new THREE.BoxGeometry(6,.06,.06),new THREE.MeshBasicMaterial({color:0xCCFF00}));neon.position.set(0,5.5,-4.9);S.add(neon);
+const metal=new THREE.MeshStandardMaterial({color:0xbfc0c4,metalness:.9,roughness:.3});
+function mkPhoto(g){const G=new THREE.Group(),h=1.5,w=h*g.w/g.h,t=new THREE.TextureLoader().load(g.img);
+const p=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshBasicMaterial({map:t,transparent:true,alphaTest:.08,side:THREE.DoubleSide,color:0xe6e6e6}));p.position.y=-h/2+.15;G.add(p);
+const hook=new THREE.Mesh(new THREE.TorusGeometry(.08,.012,6,16,Math.PI*1.4),metal);hook.position.y=.3;G.add(hook);G.traverse(o=>o.userData.g=g);G.userData.g=g;return G}
+function mkGarment(g){if(g.img)return mkPhoto(g);const m=new THREE.MeshStandardMaterial({color:g.color,roughness:g.fabric.match(/cuero|nylon/i)?.4:.85,metalness:.05});const G=new THREE.Group();
+const add=(geo,x,y,z,rz=0)=>{const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);o.rotation.z=rz;G.add(o);return o};
+if(g.type==='cargo'){add(new THREE.BoxGeometry(.38,1.1,.22),-.22,-.55,0);add(new THREE.BoxGeometry(.38,1.1,.22),.22,-.55,0);add(new THREE.BoxGeometry(.85,.2,.24),0,.05,0)}
+else{const L=g.type==='coat'?1.35:g.type==='hoodie'?.8:.7,W=g.type==='hoodie'?.95:.85;
+add(new THREE.BoxGeometry(W,L,.28),0,-L/2+.1,0);
+const sl=g.type==='coat'?1:.75;add(new THREE.BoxGeometry(.28,sl,.26),-W/2-.1,-sl/2+.05,0,.18);add(new THREE.BoxGeometry(.28,sl,.26),W/2+.1,-sl/2+.05,0,-.18);
+if(g.type==='hoodie')add(new THREE.SphereGeometry(.2,12,8),0,.12,-.1);
+if(g.type==='bomber')add(new THREE.BoxGeometry(W,.1,.3),0,-L+.12,0)}
+const hook=new THREE.Mesh(new THREE.TorusGeometry(.08,.012,6,16,Math.PI*1.4),metal);hook.position.y=.3;G.add(hook);
+G.traverse(o=>o.userData.g=g);G.userData.g=g;return G}
+const slots=[];const rackMeshes=[];
+for(let r=0;r<6;r++){const z=r<3?-1.2:-4,x0=((r%3)-1)*4.6;
+const rail=new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,4,10),metal);rail.rotation.z=Math.PI/2;rail.position.set(x0,2.3,z);S.add(rail);
+[-2,2].forEach(dx=>{const st=new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,2.3,10),metal);st.position.set(x0+dx,1.15,z);S.add(st);const ft=new THREE.Mesh(new THREE.BoxGeometry(.08,.04,1),metal);ft.position.set(x0+dx,.02,z);S.add(ft)});
+for(let i=0;i<4;i++)slots.push({x:x0-1.5+i,y:2.3,z,item:null,mesh:null})}
+function hang(g,slot){slot=slot||slots.find(s=>!s.item);if(!slot)return null;const m=mkGarment(g);m.position.set(slot.x,slot.y-.35,slot.z);m.userData.base=m.position.clone();S.add(m);slot.item=g;slot.mesh=m;rackMeshes.push(m);return slot}
+BASE.forEach((g,i)=>hang(g,slots[i<4?i:i+(i<6?0:0)]));
+/* ---------- camera / controls ---------- */
+const st={th:0,ph:.22,d:11,t:new THREE.Vector3(0,2,-3)},goal={th:0,ph:.22,d:11,t:new THREE.Vector3(0,2,-3)};
+function home(){goal.th=0;goal.ph=.22;goal.d=11;goal.t.set(0,2,-3)}
+function upd(){st.th+=(goal.th-st.th)*.08;st.ph+=(goal.ph-st.ph)*.08;st.d+=(goal.d-st.d)*.08;st.t.lerp(goal.t,.08);
+cam.position.set(st.t.x+Math.sin(st.th)*Math.cos(st.ph)*st.d,st.t.y+Math.sin(st.ph)*st.d,st.t.z+Math.cos(st.th)*Math.cos(st.ph)*st.d);cam.lookAt(st.t)}
+let drag=null,moved=0;
+cv.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY};moved=0;cv.style.cursor='grabbing'});
+addEventListener('pointerup',()=>{drag=null;cv.style.cursor='grab'});
+cv.addEventListener('pointermove',e=>{if(drag){const dx=e.clientX-drag.x,dy=e.clientY-drag.y;moved+=Math.abs(dx)+Math.abs(dy);goal.th=Math.max(-1.1,Math.min(1.1,goal.th-dx*.005));goal.ph=Math.max(.02,Math.min(.8,goal.ph+dy*.004));drag={x:e.clientX,y:e.clientY}}hover(e)});
+cv.addEventListener('wheel',e=>{e.preventDefault();goal.d=Math.max(3,Math.min(15,goal.d+e.deltaY*.01))},{passive:false});
+const ray=new THREE.Raycaster(),mp=new THREE.Vector2();let hov=null;
+function pick(e){const b=cv.getBoundingClientRect();mp.set((e.clientX-b.left)/b.width*2-1,-(e.clientY-b.top)/b.height*2+1);ray.setFromCamera(mp,cam);const h=ray.intersectObjects(rackMeshes,true)[0];return h?h.object.userData.g:null}
+function hover(e){if(drag&&moved>4){$('#tip').style.display='none';return}const g=pick(e);hov=g;const t=$('#tip');if(g){t.style.display='block';t.style.left=e.clientX+14+'px';t.style.top=e.clientY+14+'px';t.innerHTML=`<b>${g.name}</b>${money(g.price)} · ${g.fabric}`;cv.style.cursor='pointer'}else{t.style.display='none';cv.style.cursor=drag?'grabbing':'grab'}}
+cv.addEventListener('click',e=>{if(moved>4)return;const g=pick(e);if(g)inspect(g)});
+function resize(){R.setSize(innerWidth,innerHeight,false);cam.aspect=innerWidth/innerHeight;cam.updateProjectionMatrix()}addEventListener('resize',resize);resize();
+(function loop(t){requestAnimationFrame(loop);upd();rackMeshes.forEach(m=>{m.rotation.z=Math.sin(t*.001+m.position.x)*.012});if(innerWidth>760)R.render(S,cam)})(0);
+/* ---------- inspector ---------- */
+let cur=null,size='M';
+function inspect(g){cur=g;size='M';const s=slots.find(s=>s.item===g);if(s&&innerWidth>760){goal.t.set(s.x,1.7,s.z);goal.d=3.4;goal.th=0;goal.ph=.1}
+$('#iName').textContent=g.name;
+$('#iBody').innerHTML=`<div class="stage">${svg(g)}</div><div class="mono">${g.ai?'<span class="badge">AI · MADE-TO-ORDER</span>':'COLECCIÓN BASE'} · 360° STUDIO VIEW</div>
+<div style="font-size:28px;font-weight:700" class="mono">${money(g.price)}</div>
+<table class="spec mono"><tr><td>Composición</td><td>${g.fabric}</td></tr><tr><td>Gramaje</td><td>${g.gsm} g/m²</td></tr><tr><td>Corte</td><td>${g.cut}</td></tr><tr><td>Confección</td><td>${g.days} días hábiles</td></tr></table>
+<div class="sizes mono">${['S','M','L','XL'].map(z=>`<button data-z="${z}" class="${z==='M'?'on':''}">${z}</button>`).join('')}</div>
+<button class="pri" id="add">Añadir al carrito</button><button id="remix">Remixar esta prenda con IA</button>${g.custom&&role==='admin'?'<button id="del">Eliminar prenda</button>':''}`;
+$('#iBody').querySelectorAll('[data-z]').forEach(b=>b.onclick=()=>{size=b.dataset.z;$('#iBody').querySelectorAll('[data-z]').forEach(x=>x.classList.toggle('on',x===b))});
+$('#add').onclick=()=>{addBag(g,size)};if(g.custom&&role==='admin')$('#del').onclick=()=>removeCustom(g);$('#remix').onclick=()=>{close('insp');$('#ig').classList.add('open');$('#dm').value='Remix de '+g.name+': ';$('#dm').focus()};
+open_('insp')}
+const open_=id=>$('#'+id).classList.add('open'),close=id=>{$('#'+id).classList.remove('open');if(id==='insp')home()};
+$('#xInsp').onclick=()=>close('insp');
+/* ---------- bag ---------- */
+function addBag(g,z){const f=bag.find(b=>b.g.id===g.id&&b.z===z);f?f.q++:bag.push({g,z,q:1});renderBag();close('insp');open_('bag')}
+function renderBag(){$('#cnt').textContent=bag.reduce((a,b)=>a+b.q,0);$('#sub').textContent=money(bag.reduce((a,b)=>a+b.q*b.g.price,0));
+$('#bagBody').innerHTML=bag.length?bag.map((b,i)=>`<div class="msg" style="cursor:default;display:flex;gap:10px;align-items:center"><div style="width:48px">${svg(b.g)}</div><div style="flex:1"><b>${b.g.name}</b>${b.g.ai?' <span class="badge mono">AI</span>':''}<div class="mono" style="color:var(--mut)">Talla ${b.z} · ${b.q}× · ${money(b.g.price)}</div><div class="mono live">Made-to-Order</div></div><button data-i="${i}">✕</button></div>`).join(''):'<div class="mono" style="color:var(--mut)">Tu bag está vacía.</div>';
+$('#bagBody').querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{bag.splice(b.dataset.i,1);renderBag()})}
+$('#bBag').onclick=()=>open_('bag');$('#xBag').onclick=()=>close('bag');
+$('#buy').onclick=()=>{if(!bag.length)return;$('#bagBody').innerHTML='<div class="msg" style="cursor:default"><b class="live">Pedido simulado confirmado</b><div class="mono" style="margin-top:8px">'+(uname?'Cliente: '+uname:'Compra como invitado')+'<br>ID VX-'+Math.floor(Math.random()*9e5+1e5)+'<br>Producción iniciada · envío en 72h</div></div>';bag=[];$('#cnt').textContent=0;$('#sub').textContent='€0'};
+/* ---------- Instagram feed ---------- */
+const FEED=[['@kenji.tkyo','Hoodie boxy gris lavado ácido estilo Tokyo'],['@mara_nvl','Quiero la bomber en cuero negro desgastado con cierres cromados'],['@lucho.vx','Cargo verde militar con bolsillos extra, nylon'],['@sol.arch','Abrigo sastre largo en lana beige, solapa ancha'],['@dre.ink','Hoodie negro oversize con capucha doble'],['@nia.wav','Chaqueta bomber blanca ripstop reflectante']];
+const PRIOR=['Quiero la bomber en cuero negro desgastado con cierres cromados'];
+function post(u,t,mine){const d=document.createElement('div');d.className='msg';d.innerHTML=`<span class="u mono">${u}${mine?' · TÚ':''} · ahora</span>${t}<div class="mono" style="color:var(--mut);margin-top:6px">↳ clic para generar</div>`;d.onclick=()=>generate(t);$('#feed').prepend(d)}
+FEED.slice(0,4).reverse().forEach(f=>post(...f));let fi=4;setInterval(()=>{post(...FEED[fi++%FEED.length])},9000);
+$('#bIg').onclick=()=>$('#ig').classList.toggle('open');$('#xIg').onclick=()=>$('#ig').classList.remove('open');
+const send=()=>{const v=$('#dm').value.trim();if(!v)return;post('@tu_usuario',v,true);$('#dm').value='';generate(v)};$('#send').onclick=send;$('#dm').onkeydown=e=>{if(e.key==='Enter')send()};
+/* ---------- Generative engine (local fallback pipeline) ---------- */
+const COL={negro:'#17171a',gris:'#6f7076',blanc:'#e8e6df',verde:'#4b5a3a',militar:'#4b5a3a',beige:'#b9a98a',rojo:'#7a1f24',azul:'#1f3555',marr:'#4a3222',cromo:'#9a9ea6'};
+const TYPES=[['bomber','bomber'],['chaqueta','bomber'],['hoodie','hoodie'],['sudadera','hoodie'],['cargo','cargo'],['pantal','cargo'],['abrigo','coat'],['trench','coat'],['sastre','coat']];
+const FAB=[['cuero','Cuero de vacuno curtido vegetal',1.9,620],['nylon','Nylon ripstop técnico',1.1,210],['lana','Lana virgen italiana',1.7,430],['ácido','Algodón felpa lavado ácido',1,480],['acido','Algodón felpa lavado ácido',1,480],['denim','Denim japonés 14oz',1.2,400]];
+let busy=false;
+function generate(prompt){if(busy)return;busy=true;$('#iName').textContent='Motor Generativo';open_('insp');const p=prompt.toLowerCase();
+$('#iBody').innerHTML=`<div class="mono" style="color:var(--mut)">“${prompt}”</div><div id="steps"><div class="step mono" id="s1">[OPUS 5.5] Analizando petición · patronaje, textiles, precio dinámico</div><div class="step mono" id="s2">[HIGGSFIELD SOUL] Renderizando prenda fotorrealista · luz de estudio</div></div><div id="out"></div><div class="mono" id="tele" style="color:var(--mut)"></div>`;
+const tele=m=>$('#tele').textContent=m;
+const set=(a,b)=>{$('#s'+a).className='step mono done';b&&($('#s'+b).className='step mono act')};
+$('#s1').className='step mono act';tele('tokens: 0 · latency: —');let k=0;const iv=setInterval(()=>tele(`tokens: ${k+=137} · queue: soul-render-${Math.floor(Math.random()*90+10)}`),180);
+setTimeout(()=>{set(1,2)},1800);
+setTimeout(()=>{clearInterval(iv);set(2);tele('done · render 2048px · 4.1s');
+let type=(TYPES.find(t=>p.includes(t[0]))||['','hoodie'])[1];
+let color=Object.entries(COL).find(([k])=>p.includes(k));color=color?color[1]:'#2a2a2e';
+const f=FAB.find(x=>p.includes(x[0]));const fabric=f?f[1]:'Algodón heavyweight peinado',mult=f?f[2]:1,gsm=f?f[3]:400;
+const base={hoodie:170,bomber:300,cargo:190,coat:460}[type];const extras=(p.match(/cromad|reflect|bolsillo|doble|desgast|bordad/g)||[]).length;
+const price=Math.round((base*mult+extras*18)/5)*5;
+const names={hoodie:'Hoodie',bomber:'Bomber',cargo:'Cargo',coat:'Abrigo'};
+const g={id:'ai'+Date.now(),ai:true,type,name:names[type]+' VX·'+Math.floor(Math.random()*900+100),color,price,fabric,gsm,cut:p.includes('oversize')||p.includes('boxy')?'Boxy oversize':'Regular fit',days:3,prompt};
+$('#out').innerHTML=`<div class="stage">${svg(g)}</div><div class="mono"><span class="badge">GENERADA</span></div>
+<pre class="mono" style="white-space:pre-wrap;border:1px solid var(--line);padding:10px;color:var(--acid)">${JSON.stringify({name:g.name,type,fabric,gsm_m2:gsm,cut:g.cut,price_eur:price,lead_time_days:3,notes:prompt.slice(0,80)},null,1)}</pre>
+<div class="sizes mono">${['S','M','L','XL'].map(z=>`<button data-z="${z}" class="${z==='M'?'on':''}">${z}</button>`).join('')}</div>
+<button class="pri" id="hg">Colgar en el Showroom y Comprar</button>`;
+let sz='M';$('#out').querySelectorAll('[data-z]').forEach(b=>b.onclick=()=>{sz=b.dataset.z;$('#out').querySelectorAll('[data-z]').forEach(x=>x.classList.toggle('on',x===b))});
+$('#hg').onclick=()=>{let s=hang(g);if(!s){const old=slots.find(x=>x.item&&x.item.ai);if(old){S.remove(old.mesh);rackMeshes.splice(rackMeshes.indexOf(old.mesh),1);old.item=null;s=hang(g,old)}}
+garments.push(g);addCard(g);if(s&&innerWidth>760){goal.t.set(s.x,1.7,s.z);goal.d=4}addBag(g,sz)};
+busy=false},4200)}
+/* ---------- mobile carousel ---------- */
+function addCard(g){const d=document.createElement('div');d.className='card glass';d.dataset.id=g.id;d.innerHTML=`${svg(g)}<b>${g.name}</b><div class="mono" style="color:var(--mut)">${money(g.price)} · ${g.fabric}</div><button class="pri">Ver prenda</button>`;d.querySelector('button').onclick=()=>inspect(g);$('#car').appendChild(d)}
+BASE.forEach(addCard);
+/* ---------- tus prendas (fotos) ---------- */
+const note=m=>$('#addMsg').textContent=m;let customs=[],DB=null,role='guest';
+function unhang(g){const s=slots.find(x=>x.item===g);if(s){S.remove(s.mesh);rackMeshes.splice(rackMeshes.indexOf(s.mesh),1);s.item=null;s.mesh=null}const c=document.querySelector('[data-id="'+g.id+'"]');c&&c.remove()}
+async function addCustom(g){if(role!=='admin'||!DB)throw new Error('perm');const d=Object.assign({},g);delete d.custom;await DB.collection('catalog').doc(g.id).set(d)}
+async function removeCustom(g){try{await DB.collection('catalog').doc(g.id).delete();close('insp')}catch(e){note('Sin permisos o error al eliminar')}}
+function listen(){DB.collection('catalog').onSnapshot(snap=>{customs.forEach(unhang);customs=[];snap.docs.forEach(d=>{const g=Object.assign({},d.data(),{id:d.id,custom:true});customs.push(g);hang(g);addCard(g)})},()=>{})}
+(async()=>{try{DB=typeof claude!=='undefined'?await claude.use('db'):null;if(DB)listen()}catch(e){}})();
+function loadImg(file){return new Promise((ok,no)=>{const r=new FileReader();r.onload=()=>{const im=new Image();im.onload=()=>{let m=480,q=.82,o;do{const k=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);o={img:c.toDataURL('image/webp',q),w:c.width,h:c.height};m*=.8;q-=.06}while(o.img.length>230000&&m>160);ok(o)};im.onerror=no;im.src=r.result};r.onerror=no;r.readAsDataURL(file)})}
+$('#bAdd').onclick=()=>open_('addP');$('#xAdd').onclick=()=>close('addP');
+$('#addForm').onsubmit=async e=>{e.preventDefault();const f=e.target,file=f.foto.files[0];if(!file){note('Sube una foto primero.');return}
+if(!slots.some(s=>!s.item)){note('Showroom lleno. Elimina alguna prenda.');return}
+try{const im=await loadImg(file);const g={id:'c'+Date.now(),type:'photo',name:f.nombre.value||'Prenda',price:+f.precio.value||0,fabric:f.tejido.value||'—',gsm:+f.gsm.value||0,cut:f.corte.value||'—',days:+f.dias.value||3,color:'#888',...im};
+await addCustom(g);f.reset();note('Prenda publicada ✓');close('addP')}catch(err){note('No se pudo publicar (permisos o imagen muy pesada).')}};
+$('#exp').onclick=()=>{$('#io').value=JSON.stringify(customs);$('#io').select();note('Copia este texto y guárdalo en un archivo .json')};
+$('#imp').onclick=async()=>{try{const a=JSON.parse($('#io').value);let n=0;for(const g of a){if(!g.img||customs.length+n>=16)continue;g.id='c'+Date.now()+n++;await addCustom(g)}note(n+' prendas importadas')}catch(e){note('JSON no válido')}};
+/* ---------- login único: admin si coincide, si no cliente ---------- */
+let uname='',reg=false;
+const sha=async t=>[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t)))].map(b=>b.toString(16).padStart(2,'0')).join('');
+const accts=()=>{try{return JSON.parse(localStorage.getItem('vx_accts')||'{}')}catch(e){return{}}};
+function setRole(r,n){role=r;uname=n;$('#login').style.display='none';$('#bAdd').style.display=r==='admin'?'':'none';$('#bUser').textContent=r==='guest'?'Acceso':(r==='admin'?'ADMIN \u00b7 ':'')+n.slice(0,14)+' \u2715'}
+function done(r,n,e){setRole(r,n);$('#lp').value='';if(r==='client')try{localStorage.setItem('vx_sess',e)}catch(x){}}
+$('#bUser').onclick=()=>{if(role==='guest'){$('#login').style.display='grid';return}try{localStorage.removeItem('vx_sess')}catch(e){}close('addP');close('insp');setRole('guest','')};
+$('#xLg').onclick=()=>$('#login').style.display='none';
+$('#lsw').onclick=()=>{reg=!reg;$('#fn').style.display=reg?'flex':'none';$('#lt').textContent=reg?'Crear cuenta':'Iniciar sesi\u00f3n';$('#lgo').textContent=reg?'Registrarme':'Entrar';$('#lsw').textContent=reg?'\u00bfYa tienes cuenta? Inicia sesi\u00f3n':'\u00bfNo tienes cuenta? Reg\u00edstrate';$('#lm').textContent=''};
+async function isAdmin(email,pw){try{const u=typeof claude!=='undefined'?await claude.use('user'):null;if(!u||!await u.canEdit())return false;const m=await u.me();if(!m.email||m.email.toLowerCase()!==email)return false;const d=DB||await claude.use('db');if(!d)return false;const ref=d.doc('config/admin'),h=await sha('admin:'+pw),sn=await ref.get();if(!sn.exists){await ref.set({h});return m.name||'Admin'}return sn.data().h===h?(m.name||'Admin'):false}catch(e){return false}}
+$('#lgo').onclick=async()=>{const e=$('#le').value.trim().toLowerCase(),p=$('#lp').value,m=$('#lm');if(!e||p.length<6){m.textContent='Email y contrase\u00f1a (m\u00edn. 6 caracteres).';return}m.textContent='Verificando\u2026';
+if(reg){const A=accts();if(A[e]){m.textContent='Ese email ya est\u00e1 registrado.';return}const n=$('#ln').value.trim()||e.split('@')[0];A[e]={n,h:await sha(e+':'+p)};try{localStorage.setItem('vx_accts',JSON.stringify(A))}catch(x){m.textContent='No se pudo guardar la cuenta en este navegador.';return}return done('client',n,e)}
+const a=await isAdmin(e,p);if(a)return done('admin',a,e);
+const c=accts()[e];if(c&&c.h===await sha(e+':'+p))return done('client',c.n,e);
+m.textContent=c?'Contrase\u00f1a incorrecta.':'No existe cuenta con ese email. Reg\u00edstrate.'};
+try{const c=accts()[localStorage.getItem('vx_sess')];if(c)setRole('client',c.n)}catch(x){}
+</script></body></html>

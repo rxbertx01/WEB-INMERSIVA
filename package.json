@@ -1,0 +1,20 @@
+{
+  "name": "atelier-vx-showroom",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Showroom 3D de ATELIER/VX, refactorizado en módulos ES",
+  "scripts": {
+    "dev": "vite --host localhost --port 5174 --strictPort",
+    "build": "vite build",
+    "preview": "vite preview --host localhost --port 5174 --strictPort",
+    "smoke": "node scripts/smoke.mjs",
+    "verify": "npm run build && npm run smoke"
+  },
+  "dependencies": {
+    "three": "^0.187.0"
+  },
+  "devDependencies": {
+    "vite": "^8.3.8"
+  }
+}
